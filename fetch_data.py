@@ -79,29 +79,38 @@ def fetch_krx_sector_per():
 
 
 def fetch_krx_stock_list():
+    """코스피 + 코스닥 전체 종목"""
     url = "http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd"
     today = TRADING_DAY
-    params = {
-        "bld": "dbms/MDC/STAT/standard/MDCSTAT03901",
-        "mktId": "ALL",
-        "trdDd": today,
-        "share": "1",
-        "money": "1",
-        "csvxls_isNo": "false"
-    }
-    headers = {
-        "User-Agent": "Mozilla/5.0",
-        "Referer": "http://data.krx.co.kr/contents/MDC/STAT/standard/MDCSTAT03901.cmd"
-    }
-    data = urllib.parse.urlencode(params).encode()
-    req = urllib.request.Request(url, data=data, headers=headers)
-    try:
-        with urllib.request.urlopen(req, timeout=15) as response:
-            result = json.loads(response.read().decode("utf-8"))
-            return result
-    except Exception as e:
-        print(f"종목 리스트 오류: {e}")
-        return None
+    all_stocks = []
+
+    for market in ["STK", "KSQ"]:  # 코스피 + 코스닥
+        params = {
+            "bld": "dbms/MDC/STAT/standard/MDCSTAT03901",
+            "mktId": market,
+            "trdDd": today,
+            "share": "1",
+            "money": "1",
+            "csvxls_isNo": "false"
+        }
+        headers = {
+            "User-Agent": "Mozilla/5.0",
+            "Referer": "http://data.krx.co.kr/contents/MDC/STAT/standard/MDCSTAT03901.cmd"
+        }
+        data = urllib.parse.urlencode(params).encode()
+        req = urllib.request.Request(url, data=data, headers=headers)
+        try:
+            with urllib.request.urlopen(req, timeout=15) as response:
+                result = json.loads(response.read().decode("utf-8"))
+                items = result.get("output", [])
+                for item in items:
+                    item["_market"] = "KOSPI" if market == "STK" else "KOSDAQ"
+                all_stocks.extend(items)
+        except Exception as e:
+            print(f"종목 리스트 오류 ({market}): {e}")
+        time.sleep(0.5)
+
+    return {"output": all_stocks}
 
 
 def fetch_kospi_index():
@@ -183,6 +192,7 @@ def parse_sector_data(raw):
 
 
 def parse_stock_list(raw):
+    """코스피 + 코스닥 전체 종목 파싱"""
     if not raw or "output" not in raw:
         return []
     stocks = []
@@ -199,13 +209,15 @@ def parse_stock_list(raw):
             stocks.append({
                 "code": item.get("ISU_SRT_CD", ""),
                 "name": item.get("ISU_ABBRV", ""),
+                "market": item.get("_market", "KOSPI"),
                 "per": per,
                 "pbr": pbr,
                 "div_yield": safe_float(item.get("DVD_YLD")),
                 "market_cap": safe_float(item.get("MKTCAP")),
             })
+    # 시가총액 기준 정렬
     stocks.sort(key=lambda x: x["market_cap"] or 0, reverse=True)
-    return stocks[:200]
+    return stocks  # 전체 종목 반환
 
 
 # ───────────────────────────────────────────
@@ -272,6 +284,7 @@ def append_history(history, today_data):
 
 def main():
     print(f"📊 데이터 수집 시작: {datetime.now()}")
+    print(f"📅 기준 거래일: {TRADING_DAY}")
     os.makedirs("docs", exist_ok=True)
 
     print("코스피 PER/PBR 수집 중...")
@@ -289,9 +302,10 @@ def main():
     sectors = parse_sector_data(sector_raw)
     time.sleep(1)
 
-    print("개별종목 스크리너 수집 중...")
+    print("코스피 + 코스닥 전체 종목 수집 중...")
     stock_raw = fetch_krx_stock_list()
     stocks = parse_stock_list(stock_raw)
+    print(f"  → {len(stocks)}개 종목 수집 완료")
     time.sleep(1)
 
     total_cap = None
@@ -301,6 +315,7 @@ def main():
 
     today_data = {
         "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "trading_day": TRADING_DAY,
         "kospi": kospi or {},
         "kosdaq": kosdaq or {},
         "buffett": buffett or {},

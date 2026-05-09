@@ -11,13 +11,27 @@ from datetime import datetime, timedelta
 import os
 
 # ───────────────────────────────────────────
+# 최근 거래일 계산 (주말/공휴일 제외)
+# ───────────────────────────────────────────
+
+def get_last_trading_day():
+    """가장 최근 거래일 반환 (주말 제외, 오늘 포함)"""
+    d = datetime.now()
+    # 주말이면 금요일로
+    while d.weekday() >= 5:  # 5=토, 6=일
+        d -= timedelta(days=1)
+    return d.strftime("%Y%m%d")
+
+TRADING_DAY = get_last_trading_day()
+
+# ───────────────────────────────────────────
 # KRX 공식 API 호출
 # ───────────────────────────────────────────
 
 def fetch_krx_market_per(market="STK"):
     """코스피(STK) 또는 코스닥(KSQ) PER/PBR/배당수익률"""
     url = "http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd"
-    today = datetime.now().strftime("%Y%m%d")
+    today = TRADING_DAY
     
     params = {
         "bld": "dbms/MDC/STAT/standard/MDCSTAT03901",
@@ -48,7 +62,7 @@ def fetch_krx_market_per(market="STK"):
 def fetch_krx_sector_per():
     """섹터별 PER/PBR"""
     url = "http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd"
-    today = datetime.now().strftime("%Y%m%d")
+    today = TRADING_DAY
     
     params = {
         "bld": "dbms/MDC/STAT/standard/MDCSTAT03502",
@@ -78,7 +92,7 @@ def fetch_krx_sector_per():
 def fetch_krx_stock_list():
     """개별종목 PER/PBR 스크리너용"""
     url = "http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd"
-    today = datetime.now().strftime("%Y%m%d")
+    today = TRADING_DAY
     
     params = {
         "bld": "dbms/MDC/STAT/standard/MDCSTAT03901",

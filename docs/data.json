@@ -1,53 +1,8 @@
 {
-  "updated_at": "2026-05-08 15:30",
-  "kospi": {
-    "per": 10.85,
-    "pbr": 0.89,
-    "div_yield": 2.41,
-    "market_cap": 19823456000000
-  },
-  "kosdaq": {
-    "per": 28.43,
-    "pbr": 1.82,
-    "div_yield": 0.98,
-    "market_cap": 3821000000000
-  },
-  "buffett": {
-    "value": 108.2,
-    "market_cap_trillion": 2380,
-    "gdp_trillion": 2200,
-    "level": "고평가",
-    "color": "orange"
-  },
-  "sectors": [
-    {"name": "반도체", "per": 15.2, "pbr": 1.45, "div_yield": 1.2},
-    {"name": "자동차", "per": 6.8, "pbr": 0.72, "div_yield": 3.1},
-    {"name": "금융", "per": 7.2, "pbr": 0.58, "div_yield": 4.2},
-    {"name": "바이오", "per": 45.3, "pbr": 3.21, "div_yield": 0.3},
-    {"name": "화학", "per": 12.4, "pbr": 0.95, "div_yield": 2.8},
-    {"name": "철강", "per": 8.9, "pbr": 0.61, "div_yield": 3.5},
-    {"name": "IT", "per": 22.1, "pbr": 2.34, "div_yield": 0.8},
-    {"name": "에너지", "per": 11.3, "pbr": 0.88, "div_yield": 2.9},
-    {"name": "건설", "per": 9.4, "pbr": 0.77, "div_yield": 2.1},
-    {"name": "유통", "per": 13.7, "pbr": 1.12, "div_yield": 1.8},
-    {"name": "통신", "per": 10.2, "pbr": 0.91, "div_yield": 5.1},
-    {"name": "운수", "per": 8.1, "pbr": 0.69, "div_yield": 2.4}
-  ],
-  "stocks": [
-    {"code": "005930", "name": "삼성전자", "per": 13.2, "pbr": 1.21, "div_yield": 2.8, "market_cap": 3980000000000},
-    {"code": "000660", "name": "SK하이닉스", "per": 8.4, "pbr": 1.54, "div_yield": 0.9, "market_cap": 1320000000000},
-    {"code": "005380", "name": "현대차", "per": 5.9, "pbr": 0.68, "div_yield": 3.8, "market_cap": 512000000000},
-    {"code": "000270", "name": "기아", "per": 5.2, "pbr": 0.71, "div_yield": 4.1, "market_cap": 421000000000},
-    {"code": "051910", "name": "LG화학", "per": 18.3, "pbr": 1.12, "div_yield": 1.2, "market_cap": 312000000000},
-    {"code": "006400", "name": "삼성SDI", "per": 22.1, "pbr": 1.34, "div_yield": 0.8, "market_cap": 289000000000},
-    {"code": "035420", "name": "NAVER", "per": 24.8, "pbr": 1.89, "div_yield": 0.4, "market_cap": 278000000000},
-    {"code": "035720", "name": "카카오", "per": 31.2, "pbr": 1.45, "div_yield": 0.2, "market_cap": 198000000000},
-    {"code": "068270", "name": "셀트리온", "per": 38.4, "pbr": 3.12, "div_yield": 0.3, "market_cap": 187000000000},
-    {"code": "105560", "name": "KB금융", "per": 6.8, "pbr": 0.54, "div_yield": 4.8, "market_cap": 312000000000},
-    {"code": "055550", "name": "신한지주", "per": 7.1, "pbr": 0.52, "div_yield": 4.5, "market_cap": 289000000000},
-    {"code": "028260", "name": "삼성물산", "per": 11.2, "pbr": 0.88, "div_yield": 1.9, "market_cap": 198000000000},
-    {"code": "005490", "name": "POSCO홀딩스", "per": 9.8, "pbr": 0.62, "div_yield": 3.2, "market_cap": 178000000000},
-    {"code": "373220", "name": "LG에너지솔루션", "per": 45.2, "pbr": 2.87, "div_yield": 0.1, "market_cap": 521000000000},
-    {"code": "207940", "name": "삼성바이오로직스", "per": 52.3, "pbr": 4.21, "div_yield": 0.0, "market_cap": 412000000000}
-  ]
+  "updated_at": "2026-05-09 12:05",
+  "kospi": {},
+  "kosdaq": {},
+  "buffett": {},
+  "sectors": [],
+  "stocks": []
 }

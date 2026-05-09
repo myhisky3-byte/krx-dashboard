@@ -33,6 +33,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 .sec-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px;font-family:var(--mono);display:flex;align-items:center;gap:8px}
 .sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.fx-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
+@media(max-width:900px){.fx-bar{grid-template-columns:repeat(2,1fr)}}
+.fx-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;transition:border-color .2s}
+.fx-card:hover{border-color:var(--accent2)}
+.fx-pair{font-size:9px;color:var(--muted);font-family:var(--mono);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.fx-rate{font-size:22px;font-weight:900;font-family:var(--mono);letter-spacing:-0.5px}
+.fx-unit{font-size:10px;color:var(--sub);margin-left:2px}
+.fx-chg{font-size:11px;font-weight:700;font-family:var(--mono);text-align:right}
+.fx-flag{font-size:20px;margin-bottom:4px;text-align:right}
 .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:36px}
 .metric-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s}
 .metric-card:hover{border-color:var(--accent);transform:translateY(-2px)}
@@ -197,6 +206,15 @@ async function main(){
 
 function renderPage(kospi,kosdaq,buffett,sectors,history,wl){
   document.getElementById('mainContent').innerHTML=`
+
+  <div class="sec-label">실시간 환율</div>
+  <div class="fx-bar" id="fxBar">
+    <div class="fx-card"><div><div class="fx-pair">USD / KRW</div><div class="fx-rate" id="fx-usd">—<span class="fx-unit">원</span></div></div><div><div class="fx-flag">🇺🇸</div><div class="fx-chg nc" id="fx-usd-chg">—</div></div></div>
+    <div class="fx-card"><div><div class="fx-pair">JPY / KRW</div><div class="fx-rate" id="fx-jpy">—<span class="fx-unit">원</span></div></div><div><div class="fx-flag">🇯🇵</div><div class="fx-chg nc" id="fx-jpy-chg">—</div></div></div>
+    <div class="fx-card"><div><div class="fx-pair">EUR / KRW</div><div class="fx-rate" id="fx-eur">—<span class="fx-unit">원</span></div></div><div><div class="fx-flag">🇪🇺</div><div class="fx-chg nc" id="fx-eur-chg">—</div></div></div>
+    <div class="fx-card"><div><div class="fx-pair">CNY / KRW</div><div class="fx-rate" id="fx-cny">—<span class="fx-unit">원</span></div></div><div><div class="fx-flag">🇨🇳</div><div class="fx-chg nc" id="fx-cny-chg">—</div></div></div>
+  </div>
+
   <div class="sec-label">주요 지표</div>
   <div class="metrics-grid">
     <div class="metric-card"><div class="mc-label">KOSPI PER</div><div class="mc-value">${fmt(kospi.per)}</div><div class="mc-sub">주가수익비율(배)</div>${perChip(kospi.per)}</div>
@@ -415,7 +433,50 @@ function renderScr(){
 function scrGo(p){_scrPage=p;renderScr();document.querySelector('.screener-card').scrollIntoView({behavior:'smooth',block:'start'});}
 function quickAdd(code,name){const wl=getWL();if(wl.find(s=>s.code===code))return;wl.push({code,name});saveWL(wl);renderScr();renderSideWl();renderWlTable();}
 
+
+// ── 환율 ─────────────────────────────────────
+const FX_LIST = [
+  {id:'usd', ticker:'USDKRW=X', flag:'🇺🇸', pair:'USD/KRW'},
+  {id:'jpy', ticker:'JPYKRW=X', flag:'🇯🇵', pair:'JPY/KRW'},
+  {id:'eur', ticker:'EURKRW=X', flag:'🇪🇺', pair:'EUR/KRW'},
+  {id:'cny', ticker:'CNYKRW=X', flag:'🇨🇳', pair:'CNY/KRW'},
+];
+
+async function fetchFX(ticker){
+  try{
+    const r=await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1d`);
+    const d=await r.json();
+    const m=d?.chart?.result?.[0]?.meta;
+    if(!m)return null;
+    const price=m.regularMarketPrice;
+    const prev=m.chartPreviousClose||m.previousClose;
+    return{price,pct:(price-prev)/prev*100,change:price-prev};
+  }catch{return null;}
+}
+
+async function loadFX(){
+  for(const fx of FX_LIST){
+    const data=await fetchFX(fx.ticker);
+    const rateEl=document.getElementById('fx-'+fx.id);
+    const chgEl=document.getElementById('fx-'+fx.id+'-chg');
+    if(rateEl&&data){
+      // JPY는 100엔 기준으로 표시
+      const rate=fx.id==='jpy'?data.price*100:data.price;
+      const unit=fx.id==='jpy'?'원/100엔':'원';
+      rateEl.innerHTML=rate.toFixed(fx.id==='jpy'?1:0)+'<span class="fx-unit">'+unit+'</span>';
+      if(chgEl){
+        const cls=data.pct>0?'up':data.pct<0?'dn':'nc';
+        chgEl.className='fx-chg '+cls;
+        chgEl.textContent=(data.pct>=0?'+':'')+data.pct.toFixed(2)+'%';
+      }
+    }
+    await new Promise(r=>setTimeout(r,200));
+  }
+}
+
 main();
+loadFX();
+setInterval(loadFX, 60000); // 1분마다 환율 자동 갱신
 </script>
 </body>
 </html>

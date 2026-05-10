@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KODEX · 수급 분석</title>
-<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Square:wght@400;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f5f7fa;--bg2:#ffffff;--bg3:#f0f2f5;--bg4:#e8ebf0;--border:#e2e6ed;--accent:#2563eb;--accent2:#0891b2;--green:#16a34a;--red:#dc2626;--yellow:#d97706;--purple:#7c3aed;--text:#111827;--sub:#374151;--muted:#6b7280;--mono:'JetBrains Mono',monospace;--sans:'Pretendard',sans-serif}
+:root{--bg:#f5f7fa;--bg2:#ffffff;--bg3:#f0f2f5;--bg4:#e8ebf0;--border:#e2e6ed;--accent:#2563eb;--accent2:#0891b2;--green:#16a34a;--red:#dc2626;--yellow:#d97706;--purple:#7c3aed;--text:#111827;--sub:#374151;--muted:#6b7280;--mono:'JetBrains Mono',monospace;--sans:'NanumSquare','Nanum Square','Pretendard',sans-serif}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh}
 .header{padding:14px 24px;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.06)}
@@ -75,6 +75,138 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .spin{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .notice{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:12px 16px;font-size:11px;color:#1d4ed8;line-height:1.7;margin-bottom:20px}
+
+/* ── 나눔스퀘어 폰트 + 크기 업그레이드 ── */
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Square:wght@400;700;800&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/nanum-gothic@4.5.0/index.css');
+
+body {
+  font-family: 'NanumSquare', 'Nanum Square', 'Pretendard', sans-serif !important;
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+}
+
+/* 사이드바 메뉴 크게 */
+.nav-item {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  padding: 11px 12px !important;
+}
+.nav-icon { font-size: 16px !important; }
+.nav-label { font-size: 11px !important; letter-spacing: 2px !important; }
+.logo-mark { font-size: 14px !important; }
+.logo-sub { font-size: 13px !important; }
+
+/* 섹션 레이블 크게 */
+.sec-label {
+  font-size: 12px !important;
+  letter-spacing: 2px !important;
+  margin-bottom: 16px !important;
+}
+
+/* 주요 지표 카드 */
+.mc-label { font-size: 12px !important; }
+.mc-value { font-size: 42px !important; }
+.mc-sub { font-size: 13px !important; }
+.chip { font-size: 12px !important; padding: 4px 12px !important; }
+
+/* 버핏 지수 */
+.buffett-info h3 { font-size: 20px !important; }
+.buffett-info p { font-size: 14px !important; }
+.gauge-center-val .gv { font-size: 36px !important; }
+
+/* 환율 */
+.fx-pair { font-size: 11px !important; }
+.fx-rate { font-size: 24px !important; }
+
+/* 티커 카드 */
+.tc-name { font-size: 14px !important; font-weight: 800 !important; }
+.tc-code { font-size: 11px !important; }
+.tc-price { font-size: 18px !important; }
+.tc-chg { font-size: 12px !important; }
+.tc-per { font-size: 11px !important; }
+
+/* 관심종목 사이드 */
+.wl-sname { font-size: 13px !important; font-weight: 700 !important; }
+.wl-scode { font-size: 11px !important; }
+.wl-sv { font-size: 13px !important; }
+.wl-sc { font-size: 11px !important; }
+
+/* 테이블 */
+.port-table th, .wl-table th, .scr-table th,
+.flow-table th, .analysis-table th {
+  font-size: 11px !important;
+  padding: 10px 12px !important;
+}
+.port-table td, .wl-table td, .scr-table td,
+.flow-table td, .analysis-table td {
+  font-size: 13px !important;
+  padding: 13px 12px !important;
+}
+
+/* 섹터 */
+.sr-name { font-size: 13px !important; }
+.sr-per { font-size: 15px !important; }
+
+/* 수급 분석 */
+.sig-count { font-size: 42px !important; }
+.sig-title { font-size: 16px !important; }
+.sig-desc { font-size: 13px !important; }
+.sum-value { font-size: 26px !important; }
+.sum-label { font-size: 12px !important; }
+.sum-sub { font-size: 13px !important; }
+.fs-value { font-size: 26px !important; }
+
+/* AI 분석 카드 */
+.card-name { font-size: 16px !important; font-weight: 800 !important; }
+.card-code { font-size: 12px !important; }
+.m-label { font-size: 11px !important; }
+.m-value { font-size: 15px !important; font-weight: 800 !important; }
+.card-reason { font-size: 13px !important; line-height: 1.7 !important; }
+.score-circle { font-size: 17px !important; width: 54px !important; height: 54px !important; }
+
+/* 포트폴리오 */
+.sum-card .sum-value { font-size: 28px !important; }
+
+/* 헤더 */
+.header-title { font-size: 18px !important; font-weight: 900 !important; }
+.nav-links a { font-size: 14px !important; font-weight: 700 !important; }
+.update-badge { font-size: 12px !important; }
+
+/* 페이지 타이틀 */
+.page-title { font-size: 24px !important; }
+.page-sub { font-size: 14px !important; }
+.topbar .page-title { font-size: 22px !important; }
+
+/* 버튼 */
+.btn-primary, .add-btn, .filter-btn { font-size: 14px !important; padding: 10px 20px !important; }
+.btn-sm, .btn-secondary, .refresh-btn { font-size: 12px !important; }
+
+/* 폼 */
+.form-group input, .form-group select,
+.filter-group input, .filter-group select {
+  font-size: 13px !important;
+  padding: 9px 12px !important;
+}
+.form-group label, .filter-group label { font-size: 11px !important; }
+
+/* 뉴스 */
+.nc-title { font-size: 14px !important; line-height: 1.6 !important; }
+.nc-source, .nc-time { font-size: 12px !important; }
+.nc-sent { font-size: 11px !important; }
+
+/* 종목 분석기 */
+.search-title { font-size: 26px !important; }
+.search-sub { font-size: 15px !important; }
+.search-input { font-size: 16px !important; padding: 14px 18px !important; }
+.sh-name { font-size: 28px !important; }
+.sh-m-label { font-size: 11px !important; }
+.sh-m-value { font-size: 22px !important; }
+
+/* 탭 */
+.tab, .page-tab { font-size: 13px !important; padding: 11px 20px !important; }
+.flow-tab { font-size: 13px !important; padding: 10px 22px !important; }
+
 </style>
 </head>
 <body>

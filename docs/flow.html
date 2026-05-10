@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KODEX · 수급 분석</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#1a1c20;--bg2:#22252b;--bg3:#2a2d34;--bg4:#32363e;
+  --border:#3a3f4a;--accent:#3b82f6;--accent2:#06b6d4;
+  --green:#22c55e;--red:#f43f5e;--yellow:#eab308;--purple:#a855f7;
+  --text:#f1f3f7;--sub:#8b95a8;--muted:#4b5263;
+  --mono:'JetBrains Mono',monospace;--sans:'Pretendard',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;}
+
+.header{padding:16px 24px;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.header-title{font-size:15px;font-weight:800;color:var(--accent);}
+.nav-links{display:flex;gap:16px;}
+.nav-links a{font-size:12px;color:var(--muted);text-decoration:none;font-family:var(--mono);transition:color .15s;}
+.nav-links a:hover,.nav-links a.active{color:var(--accent);}
+
+.wrap{max-width:1300px;margin:0 auto;padding:32px 24px 60px;}
+
+.sec-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px;font-family:var(--mono);display:flex;align-items:center;gap:8px;}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* 탭 */
+.tab-row{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px;}
+.tab{padding:10px 20px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* 필터 바 */
+.filter-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:flex-end;}
+.filter-group{display:flex;flex-direction:column;gap:4px;}
+.filter-group label{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-family:var(--mono);}
+.filter-group select{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:8px;font-size:12px;font-family:var(--mono);outline:none;cursor:pointer;}
+.filter-group select:focus{border-color:var(--accent);}
+
+.refresh-btn{background:var(--bg3);border:1px solid var(--border);color:var(--sub);padding:7px 14px;border-radius:7px;font-size:11px;cursor:pointer;font-family:var(--mono);transition:all .15s;align-self:flex-end;}
+.refresh-btn:hover{border-color:var(--accent);color:var(--accent);}
+.refresh-btn.loading{color:var(--accent);}
+
+/* 요약 카드 */
+.summary-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+@media(max-width:700px){.summary-row{grid-template-columns:1fr;}}
+.sum-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px 20px;}
+.sum-label{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;}
+.sum-value{font-size:22px;font-weight:900;font-family:var(--mono);}
+.sum-sub{font-size:11px;color:var(--sub);margin-top:4px;}
+
+/* 테이블 */
+.table-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:24px;}
+.table-card h3{font-size:13px;font-weight:700;color:var(--sub);margin-bottom:16px;}
+
+.flow-table{width:100%;border-collapse:collapse;font-size:12px;}
+.flow-table th{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);font-family:var(--mono);cursor:pointer;user-select:none;}
+.flow-table th:hover{color:var(--accent);}
+.flow-table td{padding:11px 10px;border-bottom:1px solid rgba(255,255,255,.025);}
+.flow-table tr:hover td{background:rgba(255,255,255,.02);}
+.flow-table .num{font-family:var(--mono);text-align:right;}
+
+.rank-badge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:10px;font-weight:800;font-family:var(--mono);}
+.rank-1{background:rgba(234,179,8,.2);color:var(--yellow);}
+.rank-2{background:rgba(148,163,184,.15);color:#94a3b8;}
+.rank-3{background:rgba(180,120,60,.15);color:#b47c3c;}
+.rank-n{background:var(--bg3);color:var(--muted);}
+
+.flow-bar{display:flex;align-items:center;gap:8px;}
+.flow-bar-bg{width:80px;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.flow-bar-fill{height:100%;border-radius:3px;}
+
+.buy-text{color:var(--green);}
+.sell-text{color:var(--red);}
+
+/* 로딩 */
+.loading{text-align:center;padding:60px 20px;color:var(--muted);font-family:var(--mono);}
+.spin{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 페이저 */
+.pager{display:flex;gap:5px;justify-content:center;margin-top:16px;}
+.pg-btn{background:var(--bg3);border:1px solid var(--border);color:var(--sub);padding:5px 11px;border-radius:6px;cursor:pointer;font-size:11px;font-family:var(--mono);transition:all .15s;}
+.pg-btn.on{background:var(--accent);color:white;border-color:var(--accent);}
+.pg-btn:hover:not(.on){border-color:var(--accent);color:var(--text);}
+
+.update-time{font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:16px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title">KODEX</div>
+  <nav class="nav-links">
+    <a href="index.html">시장 개요</a>
+    <a href="ai_analysis.html">AI 분석</a>
+    <a href="news.html">뉴스</a>
+    <a href="stock_analyzer.html">종목 분석</a>
+    <a href="portfolio.html">포트폴리오</a>
+    <a href="flow.html" class="active">수급 분석</a>
+  </nav>
+</div>
+
+<div class="wrap">
+
+  <div class="sec-label">외국인 · 기관 수급 분석</div>
+
+  <!-- 탭 -->
+  <div class="tab-row">
+    <div class="tab active" onclick="switchTab('foreign', this)">🌍 외국인</div>
+    <div class="tab" onclick="switchTab('institution', this)">🏢 기관</div>
+    <div class="tab" onclick="switchTab('both', this)">🔥 외국인+기관 동반</div>
+  </div>
+
+  <!-- 필터 -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label>시장</label>
+      <select id="mktFilter" onchange="loadData()">
+        <option value="ALL">전체</option>
+        <option value="STK">코스피</option>
+        <option value="KSQ">코스닥</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>순매수/순매도</label>
+      <select id="dirFilter" onchange="renderTable()">
+        <option value="buy">순매수 상위</option>
+        <option value="sell">순매도 상위</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>표시 수</label>
+      <select id="countFilter" onchange="renderTable()">
+        <option value="20">20개</option>
+        <option value="50">50개</option>
+        <option value="100">100개</option>
+      </select>
+    </div>
+    <button class="refresh-btn" id="refreshBtn" onclick="loadData()">↻ 새로고침</button>
+  </div>
+
+  <div class="update-time" id="updateTime">— 데이터 로딩 중</div>
+
+  <!-- 요약 -->
+  <div class="summary-row">
+    <div class="sum-card">
+      <div class="sum-label">순매수 상위 1위</div>
+      <div class="sum-value" id="top1Name">—</div>
+      <div class="sum-sub" id="top1Val">—</div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-label">총 순매수 금액</div>
+      <div class="sum-value buy-text" id="totalBuy">—</div>
+      <div class="sum-sub">억원 (상위 종목 합계)</div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-label">순매수 종목 수</div>
+      <div class="sum-value" id="buyCount">—</div>
+      <div class="sum-sub" id="sellCount">— 종목 순매도</div>
+    </div>
+  </div>
+
+  <!-- 테이블 -->
+  <div class="table-card">
+    <h3 id="tableTitle">외국인 순매수 상위</h3>
+    <div id="tableWrap">
+      <div class="loading"><div class="spin"></div>데이터 불러오는 중...</div>
+    </div>
+    <div class="pager" id="pager"></div>
+  </div>
+
+</div>
+
+<script>
+let _currentTab = 'foreign';
+let _data = [];
+let _page = 1;
+const PAGE_SIZE = 20;
+
+const CORS = 'https://api.allorigins.win/get?url=';
+
+function getLastTradingDay() {
+  const d = new Date();
+  // 주말이면 금요일로
+  while (d.getDay() === 0 || d.getDay() === 6) {
+    d.setDate(d.getDate() - 1);
+  }
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}${m}${day}`;
+}
+
+function switchTab(tab, el) {
+  _currentTab = tab;
+  _page = 1;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  loadData();
+}
+
+async function loadData() {
+  const btn = document.getElementById('refreshBtn');
+  btn.textContent = '로딩 중...';
+  btn.classList.add('loading');
+
+  const mkt = document.getElementById('mktFilter').value;
+  const trdDd = getLastTradingDay();
+
+  document.getElementById('tableWrap').innerHTML = '<div class="loading"><div class="spin"></div>KRX 데이터 수집 중...</div>';
+
+  try {
+    if (_currentTab === 'both') {
+      await loadBothData(mkt, trdDd);
+    } else {
+      await loadSingleData(mkt, trdDd, _currentTab);
+    }
+    document.getElementById('updateTime').textContent = `기준일: ${trdDd.slice(0,4)}-${trdDd.slice(4,6)}-${trdDd.slice(6,8)} · ${new Date().toLocaleTimeString('ko-KR', {hour:'2-digit',minute:'2-digit'})} 갱신`;
+  } catch(e) {
+    document.getElementById('tableWrap').innerHTML = `
+      <div style="text-align:center;padding:40px;color:var(--muted);font-size:13px">
+        ⚠️ 데이터를 불러올 수 없습니다.<br>
+        <small>주말/공휴일이거나 KRX API 점검 중일 수 있습니다.</small>
+      </div>`;
+  }
+
+  btn.textContent = '↻ 새로고침';
+  btn.classList.remove('loading');
+}
+
+async function fetchKRX(bld, params) {
+  const url = 'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd';
+  const body = new URLSearchParams({bld, ...params}).toString();
+
+  // allorigins 프록시 사용
+  const proxyUrl = CORS + encodeURIComponent(url + '?' + body);
+  try {
+    const r = await fetch(proxyUrl, {signal: AbortSignal.timeout(15000)});
+    const d = await r.json();
+    return JSON.parse(d.contents);
+  } catch {
+    // 직접 호출 시도
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'Mozilla/5.0'},
+      body
+    });
+    return await r.json();
+  }
+}
+
+async function loadSingleData(mkt, trdDd, type) {
+  // 외국인 또는 기관 순매수
+  const bld = type === 'foreign'
+    ? 'dbms/MDC/STAT/standard/MDCSTAT02303'  // 외국인
+    : 'dbms/MDC/STAT/standard/MDCSTAT02403'; // 기관
+
+  const params = {
+    mktId: mkt,
+    trdDd,
+    money: '1',
+    csvxls_isNo: 'false'
+  };
+
+  const raw = await fetchKRX(bld, params);
+  const items = raw?.output || [];
+
+  _data = items.map(item => ({
+    code: item.ISU_SRT_CD || '',
+    name: item.ISU_ABBRV || '',
+    netBuy: parseNum(item.NETBID_TRDVOL || item.NETBID_TRDVAL || 0),
+    buyVol: parseNum(item.BID_TRDVOL || 0),
+    sellVol: parseNum(item.ASK_TRDVOL || 0),
+    price: parseNum(item.TDD_CLSPRC || 0),
+    chgRate: parseFloat(item.FLUC_RT || 0),
+  })).filter(s => s.name);
+
+  updateSummary(_data);
+  renderTable();
+
+  const typeLabel = type === 'foreign' ? '외국인' : '기관';
+  document.getElementById('tableTitle').textContent = `${typeLabel} 수급 현황`;
+}
+
+async function loadBothData(mkt, trdDd) {
+  // 외국인 + 기관 동반 순매수
+  const [foreignRaw, instRaw] = await Promise.all([
+    fetchKRX('dbms/MDC/STAT/standard/MDCSTAT02303', {mktId:mkt, trdDd, money:'1', csvxls_isNo:'false'}),
+    fetchKRX('dbms/MDC/STAT/standard/MDCSTAT02403', {mktId:mkt, trdDd, money:'1', csvxls_isNo:'false'}),
+  ]);
+
+  const foreignMap = {};
+  (foreignRaw?.output || []).forEach(item => {
+    foreignMap[item.ISU_SRT_CD] = parseNum(item.NETBID_TRDVOL || item.NETBID_TRDVAL || 0);
+  });
+
+  _data = (instRaw?.output || [])
+    .map(item => {
+      const instNet = parseNum(item.NETBID_TRDVOL || item.NETBID_TRDVAL || 0);
+      const foreignNet = foreignMap[item.ISU_SRT_CD] || 0;
+      return {
+        code: item.ISU_SRT_CD || '',
+        name: item.ISU_ABBRV || '',
+        netBuy: instNet + foreignNet,
+        instNet,
+        foreignNet,
+        price: parseNum(item.TDD_CLSPRC || 0),
+        chgRate: parseFloat(item.FLUC_RT || 0),
+      };
+    })
+    .filter(s => s.name && s.instNet > 0 && s.foreignNet > 0);
+
+  updateSummary(_data);
+  renderTable();
+  document.getElementById('tableTitle').textContent = '외국인 + 기관 동반 순매수';
+}
+
+function parseNum(v) {
+  try { return parseInt(String(v).replace(/,/g,'')) || 0; }
+  catch { return 0; }
+}
+
+function fmtB(v) {
+  if (!v) return '—';
+  const abs = Math.abs(v);
+  if (abs >= 1e8) return (v/1e8).toFixed(1) + '억';
+  if (abs >= 1e4) return (v/1e4).toFixed(0) + '만';
+  return v.toLocaleString();
+}
+
+function updateSummary(data) {
+  const dir = document.getElementById('dirFilter').value;
+  const sorted = [...data].sort((a,b) => dir === 'buy' ? b.netBuy - a.netBuy : a.netBuy - b.netBuy);
+  const top = sorted[0];
+
+  if (top) {
+    document.getElementById('top1Name').textContent = top.name;
+    document.getElementById('top1Val').textContent = fmtB(top.netBuy) + '주 순매수';
+  }
+
+  const buyList = data.filter(s => s.netBuy > 0);
+  const sellList = data.filter(s => s.netBuy < 0);
+  const totalBuy = buyList.reduce((a,s) => a + s.netBuy, 0);
+
+  document.getElementById('totalBuy').textContent = fmtB(totalBuy);
+  document.getElementById('buyCount').textContent = `${buyList.length}종목 순매수`;
+  document.getElementById('sellCount').textContent = `${sellList.length}종목 순매도`;
+}
+
+function renderTable() {
+  const dir = document.getElementById('dirFilter').value;
+  const count = parseInt(document.getElementById('countFilter').value);
+
+  let sorted = [..._data].sort((a,b) => dir === 'buy' ? b.netBuy - a.netBuy : a.netBuy - b.netBuy);
+  if (dir === 'buy') sorted = sorted.filter(s => s.netBuy > 0);
+  else sorted = sorted.filter(s => s.netBuy < 0);
+  sorted = sorted.slice(0, count);
+
+  const total = Math.ceil(sorted.length / PAGE_SIZE);
+  const slice = sorted.slice((_page-1)*PAGE_SIZE, _page*PAGE_SIZE);
+  const maxVal = Math.max(...sorted.map(s => Math.abs(s.netBuy)), 1);
+
+  const isBoth = _currentTab === 'both';
+
+  const thead = isBoth ? `
+    <tr>
+      <th>순위</th>
+      <th>종목명</th>
+      <th class="num">외국인 순매수</th>
+      <th class="num">기관 순매수</th>
+      <th class="num">합계</th>
+      <th class="num">현재가</th>
+      <th class="num">등락률</th>
+    </tr>` : `
+    <tr>
+      <th>순위</th>
+      <th>종목명</th>
+      <th class="num">순매수량</th>
+      <th>시각화</th>
+      <th class="num">현재가</th>
+      <th class="num">등락률</th>
+    </tr>`;
+
+  const tbody = slice.map((s, i) => {
+    const globalRank = (_page-1)*PAGE_SIZE + i + 1;
+    const rankClass = globalRank === 1 ? 'rank-1' : globalRank === 2 ? 'rank-2' : globalRank === 3 ? 'rank-3' : 'rank-n';
+    const isPos = s.netBuy > 0;
+    const barW = Math.abs(s.netBuy) / maxVal * 100;
+    const barColor = isPos ? 'var(--green)' : 'var(--red)';
+    const chgColor = s.chgRate > 0 ? 'var(--green)' : s.chgRate < 0 ? 'var(--red)' : 'var(--sub)';
+    const chgStr = s.chgRate > 0 ? `+${s.chgRate.toFixed(2)}%` : `${s.chgRate.toFixed(2)}%`;
+
+    if (isBoth) {
+      return `<tr>
+        <td><span class="rank-badge ${rankClass}">${globalRank}</span></td>
+        <td><div style="font-weight:700;font-size:13px">${s.name}</div><div style="font-size:10px;color:var(--muted);font-family:var(--mono)">${s.code}</div></td>
+        <td class="num buy-text">${fmtB(s.foreignNet)}</td>
+        <td class="num buy-text">${fmtB(s.instNet)}</td>
+        <td class="num" style="font-weight:800;color:${barColor}">${fmtB(s.netBuy)}</td>
+        <td class="num">${s.price ? s.price.toLocaleString()+'원' : '—'}</td>
+        <td class="num" style="color:${chgColor}">${chgStr}</td>
+      </tr>`;
+    }
+
+    return `<tr>
+      <td><span class="rank-badge ${rankClass}">${globalRank}</span></td>
+      <td><div style="font-weight:700;font-size:13px">${s.name}</div><div style="font-size:10px;color:var(--muted);font-family:var(--mono)">${s.code}</div></td>
+      <td class="num" style="color:${barColor};font-weight:700">${fmtB(s.netBuy)}</td>
+      <td>
+        <div class="flow-bar">
+          <div class="flow-bar-bg"><div class="flow-bar-fill" style="width:${barW}%;background:${barColor}"></div></div>
+        </div>
+      </td>
+      <td class="num">${s.price ? s.price.toLocaleString()+'원' : '—'}</td>
+      <td class="num" style="color:${chgColor}">${chgStr}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('tableWrap').innerHTML = `
+    <div style="overflow-x:auto">
+      <table class="flow-table">
+        <thead>${thead}</thead>
+        <tbody>${tbody || '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--muted)">데이터가 없습니다</td></tr>'}</tbody>
+      </table>
+    </div>`;
+
+  // 페이저
+  let ph = '';
+  if (_page > 1) ph += `<button class="pg-btn" onclick="goPage(${_page-1})">←</button>`;
+  for (let i=Math.max(1,_page-2); i<=Math.min(total,_page+2); i++) {
+    ph += `<button class="pg-btn ${i===_page?'on':''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  if (_page < total) ph += `<button class="pg-btn" onclick="goPage(${_page+1})">→</button>`;
+  document.getElementById('pager').innerHTML = ph;
+
+  updateSummary(_data);
+}
+
+function goPage(p) { _page = p; renderTable(); }
+
+// 초기 로드
+loadData();
+// 5분마다 자동 갱신
+setInterval(loadData, 5 * 60 * 1000);
+</script>
+</body>
+</html>

@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>종목 분석기</title>
+<title>KODEX · Analyzer</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#070809;--bg2:#0f1115;--bg3:#181b21;--bg4:#1e222a;
-  --border:#252932;--accent:#3b82f6;--accent2:#06b6d4;
+  --bg:#f8f9fa;--bg2:#ffffff;--bg3:#f1f3f6;--bg4:#e8ebf0;
+  --border:#e0e4ea;--accent:#3b82f6;--accent2:#06b6d4;
   --green:#22c55e;--red:#f43f5e;--yellow:#eab308;--purple:#a855f7;
-  --text:#f1f3f7;--sub:#8b95a8;--muted:#4b5263;
+  --text:#1a1c20;--sub:#4b5563;--muted:#9ca3af;
   --mono:'JetBrains Mono',monospace;--sans:'Pretendard',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -173,6 +173,108 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .step-icon{width:16px;text-align:center;}
 
 .disclaimer{background:rgba(234,179,8,.06);border:1px solid rgba(234,179,8,.2);border-radius:10px;padding:12px 16px;font-size:11px;color:var(--yellow);margin-bottom:16px;line-height:1.6;}
+
+/* ── 라이트 테마 보정 ── */
+body{background:#f5f7fa}
+.header{background:#ffffff;border-bottom:1px solid #e2e6ed;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.header-title{color:#2563eb}
+.sidebar{background:#ffffff;border-right:1px solid #e2e6ed}
+.logo-mark{color:#2563eb}
+.logo-sub{color:#6b7280}
+.nav-item{color:#6b7280}
+.nav-item:hover{background:#f0f2f5;color:#111827}
+.nav-item.active{background:#eff6ff;color:#2563eb}
+.metric-card,.chart-card,.sector-card,.screener-card,.buffett-wrap,
+.watchlist-panel,.ticker-wrap,.table-card,.add-card,
+.sum-card,.chart-card,.fs-card{
+  background:#ffffff;border:1px solid #e2e6ed;
+  box-shadow:0 1px 4px rgba(0,0,0,.05)
+}
+.metric-card::before{background:linear-gradient(90deg,#2563eb,transparent 60%)}
+.mc-label,.sec-label,.nav-label{color:#6b7280}
+.mc-value,.sum-value,.fs-value{color:#111827}
+.mc-sub,.sum-sub{color:#6b7280}
+.update-badge{background:#f0f2f5;border:1px solid #e2e6ed;color:#6b7280}
+.live-dot{background:#16a34a}
+.sec-label::after{background:#e2e6ed}
+.chip-green{background:rgba(22,163,74,.1);color:#16a34a}
+.chip-blue{background:rgba(37,99,235,.1);color:#2563eb}
+.chip-yellow{background:rgba(217,119,6,.1);color:#d97706}
+.chip-red{background:rgba(220,38,38,.1);color:#dc2626}
+.ticker-card{background:#f5f7fa;border:1px solid #e2e6ed}
+.ticker-card:hover{border-color:#2563eb}
+.tc-name{color:#111827}
+.tc-code{color:#6b7280}
+.wl-side-item:hover{background:#f5f7fa}
+.wl-sname{color:#111827}
+.wl-scode{color:#6b7280}
+.refresh-btn,.btn-sm,.btn-secondary{background:#f5f7fa;border:1px solid #e2e6ed;color:#6b7280}
+.refresh-btn:hover,.btn-sm:hover{border-color:#2563eb;color:#2563eb}
+.filter-group input,.filter-group select,.search-input,.add-form input,.form-group input{
+  background:#f5f7fa;border:1px solid #e2e6ed;color:#111827
+}
+.filter-group input:focus,.filter-group select:focus,.search-input:focus,.form-group input:focus{border-color:#2563eb}
+.scr-table th,.flow-table th,.port-table th,.wl-table th,.analysis-table th{color:#6b7280;border-bottom-color:#e2e6ed}
+.scr-table td,.flow-table td,.port-table td,.wl-table td,.analysis-table td{border-bottom-color:#f0f2f5}
+.scr-table tr:hover td,.flow-table tr:hover td,.port-table tr:hover td,.wl-table tr:hover td{background:#f5f7fa}
+.sr-bar-bg,.pb-bar-bg,.flow-bar-bg,.sb-bar-bg,.per-bar-bg{background:#e8ebf0}
+.sector-row{background:#f5f7fa}
+.sector-row:hover{background:#eff6ff}
+.sr-bar-fill{background:linear-gradient(90deg,#2563eb,#0891b2)}
+.pg-btn{background:#f5f7fa;border:1px solid #e2e6ed;color:#6b7280}
+.pg-btn.on{background:#2563eb;color:white;border-color:#2563eb}
+.pg-btn:hover:not(.on){border-color:#2563eb;color:#2563eb}
+.news-card,.news-card-s,.stock-card,.verdict-card.buy,.verdict-card.hold,.verdict-card.sell{background:#ffffff;border:1px solid #e2e6ed}
+.nc-title{color:#111827}
+.nc-source,.nc-time{color:#9ca3af}
+.nc-kw{background:#f5f7fa;color:#6b7280}
+.nc-kw.hot{background:#f3e8ff;color:#7c3aed}
+.tab,.page-tab,.flow-tab{color:#6b7280}
+.tab.active,.page-tab.active{color:#2563eb;border-bottom-color:#2563eb}
+.flow-tab.active{background:#2563eb;color:white;border-color:#2563eb}
+.disclaimer,.info-box{background:#eff6ff;border-color:#bfdbfe;color:#3b82f6}
+.rank-n{background:#f0f2f5;color:#6b7280}
+.del-btn,.modal-close{background:#f5f7fa;border:1px solid #e2e6ed;color:#6b7280}
+.del-btn:hover{border-color:#dc2626;color:#dc2626}
+.buffett-info p{color:#6b7280}
+.buffett-info h3{color:#111827}
+.scale-chip{color:#111827}
+.gauge-labels{color:#6b7280}
+.sr-name,.tc-name,.wl-sname{color:#111827}
+.sr-per,.tc-price,.wl-sv{color:#111827}
+.search-input::placeholder,.add-form input::placeholder,.form-group input::placeholder{color:#9ca3af}
+.empty-state,.empty-text,.no-news,.loading{color:#9ca3af}
+.aa-summary{background:#f5f7fa;color:#374151}
+.aa-item{background:#f5f7fa}
+.aa-item-label{color:#9ca3af}
+.aa-headline{color:#374151;border-left-color:#2563eb}
+.sr-box{background:#f5f7fa}
+.modal{background:#ffffff;border:1px solid #e2e6ed}
+.modal-code{color:#6b7280}
+.add-form,.add-form.open{background:#f5f7fa;border-color:#e2e6ed}
+.keyword-cloud,.sentiment-summary,.article-analysis{background:#ffffff;border:1px solid #e2e6ed}
+.kc-title,.ss-title,.aa-title{color:#6b7280}
+.sent-bar{background:#e8ebf0}
+.sent-count-item{background:#f5f7fa}
+.sci-label{color:#6b7280}
+.kw-tag{background:#f5f7fa;color:#374151}
+.macro-detail-card,.macro-signal-card{background:#ffffff;border:1px solid #e2e6ed}
+.macro-summary{color:#374151}
+.macro-news-item{background:#f5f7fa;color:#6b7280}
+.sh-metric{background:#f5f7fa}
+.sh-m-label{color:#6b7280}
+.fin-item{background:#f5f7fa}
+.fin-label{color:#6b7280}
+.news-item{background:#f5f7fa}
+.loading-wrap{color:#6b7280}
+.score-circle.buy{background:rgba(22,163,74,.1);border-color:rgba(22,163,74,.3)}
+.score-circle.hold{background:rgba(217,119,6,.1);border-color:rgba(217,119,6,.3)}
+.score-circle.sell{background:rgba(220,38,38,.1);border-color:rgba(220,38,38,.3)}
+.verdict-card.buy{background:rgba(22,163,74,.04);border-color:rgba(22,163,74,.25)}
+.verdict-card.hold{background:rgba(217,119,6,.04);border-color:rgba(217,119,6,.25)}
+.verdict-card.sell{background:rgba(220,38,38,.04);border-color:rgba(220,38,38,.25)}
+.wl-header h3,.table-header h3,.chart-card h3,.sector-card h3,.screener-top h3,.buffett-info h3{color:#374151}
+
 </style>
 </head>
 <body>
@@ -180,7 +282,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 <!-- 헤더 -->
 <div class="header">
   <div class="header-left">
-    <div class="header-title">🔍 종목 분석기</div>
+    <div class="header-title">🔍 KODEX · Analyzer</div>
   </div>
   <nav class="nav-links">
     <a href="index.html">시장 개요</a>
@@ -192,7 +294,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
 <!-- 검색 -->
 <div class="search-section">
-  <div class="search-title">종목 분석기</div>
+  <div class="search-title">KODEX · Analyzer</div>
   <div class="search-sub">종목명 또는 코드를 입력하면 재무·밸류에이션·뉴스를 종합해 매수 여부를 판단합니다</div>
 
   <div class="search-box">
@@ -644,8 +746,8 @@ function renderResult(name, code, info, price, news, krx) {
           responsive: true, maintainAspectRatio: false,
           plugins: { legend: { display: false } },
           scales: {
-            x: { ticks: { color: '#4b5263', font: { size: 9 }, maxTicksLimit: 8 }, grid: { color: '#1e222a' } },
-            y: { ticks: { color: '#4b5263', font: { size: 9 }, callback: v => v.toLocaleString() }, grid: { color: '#1e222a' } }
+            x: { ticks: { color: '#4b5263', font: { size: 9 }, maxTicksLimit: 8 }, grid: { color: '#f0f2f5' } },
+            y: { ticks: { color: '#4b5263', font: { size: 9 }, callback: v => v.toLocaleString() }, grid: { color: '#f0f2f5' } }
           }
         }
       });
